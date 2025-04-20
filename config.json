@@ -1,9 +1,11 @@
 {
-  "BotToken": "MTM2MzIyOTY1Nzk1NjA4OTg3Nw.G644Uu.xo4cz09-t3zXpmNRCz3G3xeioPo4IaYtma0I4c",
-  "ClientID": "1363229657956089877",
-  "GuildId": "1093184059758350427",
-  "ApplicationReceivingChannel": "1363231084363649185",
-  "WhitelistRole": "1274779043987718205",
-  "AcceptedChannel": "1362769490701582356",
-  "RejectedChannel": "1362769517343670274"
+  "BotToken": "",
+  "ClientID": "",
+  "GuildId": "",
+  "ApplicationReceivingChannel": "",
+  "WhitelistRole": "",
+  "AcceptedChannel": "",
+  "RejectedChannel": "",
+  "WhitelistHoldChannel": "",
+  "VisaHoldVoiceChannel": ""
 }

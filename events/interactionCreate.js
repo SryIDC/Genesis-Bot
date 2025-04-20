@@ -15,6 +15,8 @@ const {
   WhitelistRole,
   RejectedChannel,
   AcceptedChannel,
+  WhitelistHoldChannel,
+  VisaHoldVoiceChannel,
 } = require("../config.json");
 
 module.exports = {
@@ -51,6 +53,14 @@ module.exports = {
       const collectorFilter = (i) => user.id === user.id;
       try {
         if (customId === "whitelistApply") {
+          if (interaction.member.roles.cache.has(WhitelistRole)) {
+            await interaction.reply({
+              content: `You are already whitelisted, you can't apply again!`,
+              flags: MessageFlags.Ephemeral,
+            });
+            return;
+          }
+
           const modal = new ModalBuilder()
             .setCustomId("genWhitelist")
             .setTitle("Genesis Whitelist");
@@ -158,12 +168,9 @@ module.exports = {
           const embed = EmbedBuilder.from(message.embeds[0]);
           const userId = embed.data.footer?.text;
 
-          const newStatus =
-            customId === "acceptWhitelist"
-              ? "✅ Form Status: Accepted"
-              : "❌ Form Status: Declined";
+          const newStatus = "🛑 Form Status: Whitelist Hold";
 
-          const newColor = customId === "acceptWhitelist" ? "00ff13" : "ff0000";
+          const newColor = "edff00";
 
           if (!userId) {
             return interaction.reply({
@@ -172,13 +179,14 @@ module.exports = {
             });
           }
 
-          if (customId === "acceptWhitelist") {
-            const member = await guild.members.fetch(userId);
-            await member.roles.add(WhitelistRole);
-          }
-
           embed.setDescription(newStatus);
           embed.setColor(newColor);
+
+          const buttons = new ActionRowBuilder().addComponents(
+            acceptWhitelist,
+            declineWhitelist,
+            holdWhitelist
+          );
 
           const disabledRow = ActionRowBuilder.from(message.components[0]);
           disabledRow.components.forEach((btn) => btn.setDisabled(true));
@@ -189,19 +197,16 @@ module.exports = {
           });
 
           const dmChannel = await interaction.client.channels.fetch(
-            `${
-              customId === "acceptWhitelist" ? AcceptedChannel : RejectedChannel
-            }`
+            WhitelistHoldChannel
           );
 
           await dmChannel.send({
-            content: `<@${userId}> your whitelist application has been ${
-              customId === "acceptWhitelist" ? "accepted" : "declined"
-            }`,
+            content: `<@${userId}> your whitelist application has been put on hold🛑. Please join <#${VisaHoldVoiceChannel}> and contact management team!  `,
+            components: [buttons],
           });
 
           await interaction.reply({
-            content: `Form has been `,
+            content: `This form has been put on hold for now.`,
             flags: MessageFlags.Ephemeral,
           });
           return;
@@ -271,7 +276,7 @@ module.exports = {
           const holdWhitelist = new ButtonBuilder()
             .setCustomId("holdWhitelist")
             .setLabel("Hold Application")
-            .setStyle(ButtonStyle.Premium)
+            .setStyle(ButtonStyle.Primary)
             .setEmoji("🛑");
 
           const buttons = new ActionRowBuilder().addComponents(
