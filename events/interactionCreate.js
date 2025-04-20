@@ -60,7 +60,6 @@ module.exports = {
             });
             return;
           }
-
           const modal = new ModalBuilder()
             .setCustomId("genWhitelist")
             .setTitle("Genesis Whitelist");
